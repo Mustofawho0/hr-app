@@ -1,0 +1,98 @@
+-- CreateTable
+CREATE TABLE `Employees` (
+    `uid` VARCHAR(191) NOT NULL,
+    `email` VARCHAR(191) NOT NULL,
+    `fullname` VARCHAR(191) NOT NULL,
+    `password` VARCHAR(191) NOT NULL,
+    `positionId` INTEGER NOT NULL,
+    `shiftId` INTEGER NOT NULL,
+    `leaveBalance` INTEGER NOT NULL DEFAULT 12,
+    `address` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `deletedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`uid`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Positions` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(191) NOT NULL,
+    `salary` INTEGER NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `deletedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Shifts` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `start` TIME NOT NULL,
+    `end` TIME NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `deletedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Attendances` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `date` DATE NOT NULL,
+    `clockin` TIME NOT NULL,
+    `clockout` TIME NOT NULL,
+    `employeeId` VARCHAR(191) NOT NULL,
+    `deduction` INTEGER NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `deletedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `LeaveRequests` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `stardDate` DATE NOT NULL,
+    `endDate` DATE NOT NULL,
+    `status` ENUM('APPROVED', 'REJECTED', 'PENDING') NOT NULL DEFAULT 'PENDING',
+    `employeeId` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `deletedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `MonthlyPayrolls` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `date` DATE NOT NULL,
+    `employeeId` VARCHAR(191) NOT NULL,
+    `totalDeduction` INTEGER NOT NULL,
+    `finalSalary` INTEGER NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `deletedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `Employees` ADD CONSTRAINT `Employees_positionId_fkey` FOREIGN KEY (`positionId`) REFERENCES `Positions`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Employees` ADD CONSTRAINT `Employees_shiftId_fkey` FOREIGN KEY (`shiftId`) REFERENCES `Shifts`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Attendances` ADD CONSTRAINT `Attendances_employeeId_fkey` FOREIGN KEY (`employeeId`) REFERENCES `Employees`(`uid`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `LeaveRequests` ADD CONSTRAINT `LeaveRequests_employeeId_fkey` FOREIGN KEY (`employeeId`) REFERENCES `Employees`(`uid`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `MonthlyPayrolls` ADD CONSTRAINT `MonthlyPayrolls_employeeId_fkey` FOREIGN KEY (`employeeId`) REFERENCES `Employees`(`uid`) ON DELETE RESTRICT ON UPDATE CASCADE;

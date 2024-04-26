@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const EmployeeController_1 = require("../controllers/EmployeeController");
+const Token_1 = require("../helpers/Token");
+const router = (0, express_1.Router)();
+router.post('/clockin', Token_1.tokenVerify, EmployeeController_1.clockin);
+router.put('/clockout/:attendanceId', Token_1.tokenVerify, EmployeeController_1.clockout);
+router.post('/leave', Token_1.tokenVerify, EmployeeController_1.leaveRequest);
+router.get('/position', EmployeeController_1.employeePosition);
+router.get('/shift', EmployeeController_1.employeeShift);
+exports.default = router;

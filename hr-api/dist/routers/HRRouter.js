@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const HRController_1 = require("../controllers/HRController");
+const HRValidator_1 = require("../middleware/HRValidator");
+const example_1 = require("../middleware/example");
+const HandleErrorExpressValidator_1 = require("../middleware/HandleErrorExpressValidator");
+const Token_1 = require("../helpers/Token");
+const RoleVerify_1 = require("../middleware/RoleVerify");
+const router = (0, express_1.Router)();
+router.put('/approval/leave-request/:id', RoleVerify_1.roleVerifyHRAndManager, HRController_1.approvalLeaveRequest);
+router.post('/employee', example_1.exampleMiddleware, Token_1.tokenVerify, RoleVerify_1.roleVerifyHRAndManager, HRValidator_1.validatorCreateEmployee, HandleErrorExpressValidator_1.handleErrorValidator, HRController_1.createEmployeeAccount);
+exports.default = router;
