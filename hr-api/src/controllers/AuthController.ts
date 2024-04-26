@@ -27,6 +27,7 @@ export const login = async (
       message: 'Login Success!',
       data: {
         token,
+        fullname: findEmployeeByEmailResult.fullname,
       },
     });
   } catch (error: any) {

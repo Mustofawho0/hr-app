@@ -31,6 +31,7 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
             message: 'Login Success!',
             data: {
                 token,
+                fullname: findEmployeeByEmailResult.fullname,
             },
         });
     }

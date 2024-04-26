@@ -1,21 +1,21 @@
-import { BsFillClockFill } from "react-icons/bs";
-import { RiFileList3Fill } from "react-icons/ri";
-import { BsCalendarWeekFill } from "react-icons/bs";
-import { FaVirusCovid } from "react-icons/fa6";
+'use client';
+
+import { BsFillClockFill } from 'react-icons/bs';
+import { RiFileList3Fill } from 'react-icons/ri';
+import { BsCalendarWeekFill } from 'react-icons/bs';
+import { FaVirusCovid } from 'react-icons/fa6';
+import { useSelector } from 'react-redux';
 
 export default function Home() {
+  const stateUser = useSelector((state) => state.user);
   return (
     <>
-      <div
-        className='bg-indigo-500 px-10 rounded-es-lg rounded-ee-lg'
-      >
+      <div className='bg-indigo-500 px-10 rounded-es-lg rounded-ee-lg'>
         <div className='py-5 flex justify-between'>
           <div>
-            <h1 className='text-xl text-white'>
-              Welcome, 
-            </h1>
+            <h1 className='text-xl text-white'>Welcome,</h1>
             <h1 className='text-xl text-white font-bold'>
-              Muhammad Defryan Tridya Isfandy
+              {stateUser.fullname}
             </h1>
           </div>
           <div>
@@ -28,21 +28,15 @@ export default function Home() {
           <div className='grid grid-cols-12 gap-3 bg-gray-100 rounded-lg py-5'>
             <div className='col-span-4 flex flex-col justify-center items-center'>
               <BsFillClockFill className='text-xl text-yellow-500' />
-              <h1 className='font-bold text-black'>
-                Live Attendance
-              </h1> 
+              <h1 className='font-bold text-black'>Live Attendance</h1>
             </div>
             <div className='col-span-4 flex flex-col justify-center items-center'>
               <RiFileList3Fill className='text-xl text-green-500' />
-              <h1 className='font-bold text-black'>
-                Reimbursement
-              </h1> 
+              <h1 className='font-bold text-black'>Reimbursement</h1>
             </div>
             <div className='col-span-4 flex flex-col justify-center items-center'>
               <BsCalendarWeekFill className='text-xl text-red-500' />
-              <h1 className='font-bold text-black'>
-                Deduction Log
-              </h1> 
+              <h1 className='font-bold text-black'>Deduction Log</h1>
             </div>
           </div>
         </div>
@@ -54,33 +48,19 @@ export default function Home() {
           </h1>
           <FaVirusCovid className='text-5xl text-indigo-500' />
         </div>
-        <h1 className='text-xl font-bold'>
-          Announcements
-        </h1>
+        <h1 className='text-xl font-bold'>Announcements</h1>
         <div className='flex flex-col items-between gap-5'>
           <div className='py-5 border-b-2 flex justify-between'>
-            <h1>
-              Info Cuti Lebaran Th. 2024
-            </h1>
-            <h1 className='text-gray-300'>
-              29 April 2024
-            </h1>
+            <h1>Info Cuti Lebaran Th. 2024</h1>
+            <h1 className='text-gray-300'>29 April 2024</h1>
           </div>
           <div className='py-5 border-b-2 flex justify-between'>
-            <h1>
-              Ketentuan Clock-in & Clock-out
-            </h1>
-            <h1 className='text-gray-300'>
-              29 April 2024
-            </h1>
+            <h1>Ketentuan Clock-in & Clock-out</h1>
+            <h1 className='text-gray-300'>29 April 2024</h1>
           </div>
           <div className='py-5 border-b-2 flex justify-between'>
-            <h1>
-              Syarat Pengajuan Reimburse
-            </h1>
-            <h1 className='text-gray-300'>
-              29 April 2024
-            </h1>
+            <h1>Syarat Pengajuan Reimburse</h1>
+            <h1 className='text-gray-300'>29 April 2024</h1>
           </div>
         </div>
       </div>
