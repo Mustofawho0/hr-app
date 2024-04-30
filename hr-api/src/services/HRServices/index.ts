@@ -4,7 +4,7 @@ import { ICreateEmployeeServices } from './type';
 
 export const updateLeaveRequest = async ({ id }: { id: number }) => {
   return await prisma.$transaction(async (tx) => {
-    const updateLeaveRequest = await tx.leaveRequests.update({
+    const updateLeaveRequest = await tx.leaveRequest.update({
       data: {
         status: 'APPROVED',
       },
@@ -13,7 +13,7 @@ export const updateLeaveRequest = async ({ id }: { id: number }) => {
       },
     });
 
-    const findEmployee = await tx.employees.findUnique({
+    const findEmployee = await tx.employee.findUnique({
       where: {
         uid: updateLeaveRequest.employeeId,
       },
@@ -51,11 +51,11 @@ export const updateLeaveRequest = async ({ id }: { id: number }) => {
       startLeaveDate = addDays(startLeaveDate, 1);
     }
 
-    await tx.attendances.createMany({
+    await tx.attendance.createMany({
       data: [...dates],
     });
 
-    await tx.employees.update({
+    await tx.employee.update({
       data: {
         leaveBalance: findEmployee?.leaveBalance - dates.length,
       },
@@ -74,7 +74,7 @@ export const createEmployee = async ({
   shiftId,
   address,
 }: ICreateEmployeeServices) => {
-  await prisma.employees.create({
+  await prisma.employee.create({
     data: {
       email,
       fullname,

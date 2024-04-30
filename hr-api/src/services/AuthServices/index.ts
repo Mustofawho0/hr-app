@@ -4,7 +4,7 @@ import { prisma } from '../../connection';
 export const findEmployeeByEmail = async ({
   email,
 }: IFindEmployeeByEmailParams) => {
-  const findEmployee = await prisma.employees.findFirst({
+  const findEmployee = await prisma.employee.findFirst({
     where: {
       email,
     },
@@ -15,7 +15,7 @@ export const findEmployeeByEmail = async ({
   return findEmployee;
 };
 export const findEmployeeByUid = async ({ uid }: { uid: string }) => {
-  return await prisma.employees.findUnique({
+  return await prisma.employee.findUnique({
     where: {
       uid,
     },

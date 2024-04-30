@@ -6,8 +6,9 @@ import { useGetPositionAndShift } from '~/hooks/auth/useGetPositionAndShift';
 
 export default function LoginPage() {
   const { mutationAuth } = useAuthRegister();
-  const { dataPositionAndShift } = useGetPositionAndShift();
-  if (dataPositionAndShift === undefined) return <div>Loading...</div>;
+  const { dataPosition, dataShift } = useGetPositionAndShift();
+  if (dataPosition === undefined || dataShift === undefined)
+    return <div>Loading...</div>;
 
   return (
     <>
@@ -84,9 +85,9 @@ export default function LoginPage() {
                   className='select select-bordered w-full'
                 >
                   <option>Choose Role</option>
-                  {dataPositionAndShift?.map((position, index) => {
+                  {dataPosition?.map((position, index) => {
                     return (
-                      <option key={index} value={position.id}>
+                      <option value={position.id} key={index}>
                         {position.name}
                       </option>
                     );
@@ -106,8 +107,13 @@ export default function LoginPage() {
                   className='select select-bordered w-full'
                 >
                   <option>Choose Shift</option>
-                  <option value={1}>09:00-18:00</option>
-                  <option value={2}>13:00-22:00</option>
+                  {dataShift?.map((shift, index) => {
+                    return (
+                      <option key={index} value={shift.id}>
+                        {shift.start}-{shift.end}
+                      </option>
+                    );
+                  })}
                 </Field>
               </label>
             </div>

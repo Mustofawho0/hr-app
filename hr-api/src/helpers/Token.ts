@@ -9,7 +9,7 @@ export const createToken = ({ uid }: { uid: string }) => {
   });
 };
 
-interface IReqAccessToken extends Request {
+export interface IReqAccessToken extends Request {
   payload: any;
   headers: {
     token: string;

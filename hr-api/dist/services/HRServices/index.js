@@ -14,7 +14,7 @@ const connection_1 = require("../../connection");
 const date_fns_1 = require("date-fns");
 const updateLeaveRequest = (_a) => __awaiter(void 0, [_a], void 0, function* ({ id }) {
     return yield connection_1.prisma.$transaction((tx) => __awaiter(void 0, void 0, void 0, function* () {
-        const updateLeaveRequest = yield tx.leaveRequests.update({
+        const updateLeaveRequest = yield tx.leaveRequest.update({
             data: {
                 status: 'APPROVED',
             },
@@ -22,7 +22,7 @@ const updateLeaveRequest = (_a) => __awaiter(void 0, [_a], void 0, function* ({ 
                 id,
             },
         });
-        const findEmployee = yield tx.employees.findUnique({
+        const findEmployee = yield tx.employee.findUnique({
             where: {
                 uid: updateLeaveRequest.employeeId,
             },
@@ -55,10 +55,10 @@ const updateLeaveRequest = (_a) => __awaiter(void 0, [_a], void 0, function* ({ 
             }
             startLeaveDate = (0, date_fns_1.addDays)(startLeaveDate, 1);
         }
-        yield tx.attendances.createMany({
+        yield tx.attendance.createMany({
             data: [...dates],
         });
-        yield tx.employees.update({
+        yield tx.employee.update({
             data: {
                 leaveBalance: (findEmployee === null || findEmployee === void 0 ? void 0 : findEmployee.leaveBalance) - dates.length,
             },
@@ -70,7 +70,7 @@ const updateLeaveRequest = (_a) => __awaiter(void 0, [_a], void 0, function* ({ 
 });
 exports.updateLeaveRequest = updateLeaveRequest;
 const createEmployee = (_b) => __awaiter(void 0, [_b], void 0, function* ({ email, fullname, password, positionId, shiftId, address, }) {
-    yield connection_1.prisma.employees.create({
+    yield connection_1.prisma.employee.create({
         data: {
             email,
             fullname,

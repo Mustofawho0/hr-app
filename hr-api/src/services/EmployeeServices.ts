@@ -1,17 +1,13 @@
 import { differenceInMinutes } from 'date-fns';
 import { prisma } from '../connection';
 
-export const createAttendanceClockin = async ({
-  employeeid,
-}: {
-  employeeid: any;
-}) => {
-  await prisma.attendances.create({
+export const createAttendanceClockin = async ({ uid }: { uid: any }) => {
+  await prisma.attendance.create({
     data: {
       date: new Date(),
       clockin: new Date(),
       deduction: 0,
-      employeeId: employeeid,
+      employeeId: uid,
     },
   });
 };
@@ -23,7 +19,7 @@ export const createAttendanceClockout = async ({
   attendanceId: number;
   employeeid: any;
 }) => {
-  const findAttendanceAndEmployee = await prisma.attendances.findUnique({
+  const findAttendanceAndEmployee = await prisma.attendance.findUnique({
     where: {
       id: attendanceId,
       employeeId: employeeid,
@@ -40,7 +36,7 @@ export const createAttendanceClockout = async ({
 
   if (!findAttendanceAndEmployee) return null;
 
-  const attendanceUpdate = await prisma.attendances.update({
+  const attendanceUpdate = await prisma.attendance.update({
     data: {
       clockout: new Date(),
     },
@@ -66,7 +62,7 @@ export const createAttendanceClockout = async ({
       totalMinutes *
       (findAttendanceAndEmployee.employee.position.salary * 0.001);
 
-    await prisma.attendances.update({
+    await prisma.attendance.update({
       data: {
         deduction,
       },
@@ -87,7 +83,7 @@ export const createLeaveEmployeeRequest = async ({
   endDate: any;
   employeeid: any;
 }) => {
-  await prisma.leaveRequests.create({
+  await prisma.leaveRequest.create({
     data: {
       stardDate: new Date(startDate),
       endDate: new Date(endDate),
@@ -97,8 +93,29 @@ export const createLeaveEmployeeRequest = async ({
 };
 
 export const findPosition = async () => {
-  return await prisma.positions.findMany();
+  return await prisma.position.findMany();
 };
 export const findShift = async () => {
-  return await prisma.shifts.findMany();
+  return await prisma.shift.findMany();
+};
+
+export const createProfileAndImagesProfile = async (data: any, images: any) => {
+  const creaetEmployeeProfile = await prisma.employeeProfile.create({
+    data: {
+      birthDate: new Date(data.birthDate),
+      address: data.address,
+      employeeId: 'clvlxbwke0001tf9iotx5mhx9',
+    },
+  });
+
+  const imageToCreate: any = [];
+  images.forEach((item: any) => {
+    imageToCreate.push({
+      url: item.path,
+      employeeProfileId: creaetEmployeeProfile.id,
+    });
+  });
+  await prisma.employeeImagesProfile.createMany({
+    data: [...imageToCreate],
+  });
 };

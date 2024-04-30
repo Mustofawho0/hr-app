@@ -9,22 +9,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findShift = exports.findPosition = exports.createLeaveEmployeeRequest = exports.createAttendanceClockout = exports.createAttendanceClockin = void 0;
+exports.createProfileAndImagesProfile = exports.findShift = exports.findPosition = exports.createLeaveEmployeeRequest = exports.createAttendanceClockout = exports.createAttendanceClockin = void 0;
 const date_fns_1 = require("date-fns");
 const connection_1 = require("../connection");
-const createAttendanceClockin = (_a) => __awaiter(void 0, [_a], void 0, function* ({ employeeid, }) {
-    yield connection_1.prisma.attendances.create({
+const createAttendanceClockin = (_a) => __awaiter(void 0, [_a], void 0, function* ({ uid }) {
+    yield connection_1.prisma.attendance.create({
         data: {
             date: new Date(),
             clockin: new Date(),
             deduction: 0,
-            employeeId: employeeid,
+            employeeId: uid,
         },
     });
 });
 exports.createAttendanceClockin = createAttendanceClockin;
 const createAttendanceClockout = (_b) => __awaiter(void 0, [_b], void 0, function* ({ attendanceId, employeeid, }) {
-    const findAttendanceAndEmployee = yield connection_1.prisma.attendances.findUnique({
+    const findAttendanceAndEmployee = yield connection_1.prisma.attendance.findUnique({
         where: {
             id: attendanceId,
             employeeId: employeeid,
@@ -40,7 +40,7 @@ const createAttendanceClockout = (_b) => __awaiter(void 0, [_b], void 0, functio
     });
     if (!findAttendanceAndEmployee)
         return null;
-    const attendanceUpdate = yield connection_1.prisma.attendances.update({
+    const attendanceUpdate = yield connection_1.prisma.attendance.update({
         data: {
             clockout: new Date(),
         },
@@ -55,7 +55,7 @@ const createAttendanceClockout = (_b) => __awaiter(void 0, [_b], void 0, functio
         const totalMinutes = Math.floor((differentInMinutesClockin + Math.abs(differentInMinutesClockout)) / 30);
         const deduction = totalMinutes *
             (findAttendanceAndEmployee.employee.position.salary * 0.001);
-        yield connection_1.prisma.attendances.update({
+        yield connection_1.prisma.attendance.update({
             data: {
                 deduction,
             },
@@ -68,7 +68,7 @@ const createAttendanceClockout = (_b) => __awaiter(void 0, [_b], void 0, functio
 });
 exports.createAttendanceClockout = createAttendanceClockout;
 const createLeaveEmployeeRequest = (_c) => __awaiter(void 0, [_c], void 0, function* ({ startDate, endDate, employeeid, }) {
-    yield connection_1.prisma.leaveRequests.create({
+    yield connection_1.prisma.leaveRequest.create({
         data: {
             stardDate: new Date(startDate),
             endDate: new Date(endDate),
@@ -78,10 +78,30 @@ const createLeaveEmployeeRequest = (_c) => __awaiter(void 0, [_c], void 0, funct
 });
 exports.createLeaveEmployeeRequest = createLeaveEmployeeRequest;
 const findPosition = () => __awaiter(void 0, void 0, void 0, function* () {
-    return yield connection_1.prisma.positions.findMany();
+    return yield connection_1.prisma.position.findMany();
 });
 exports.findPosition = findPosition;
 const findShift = () => __awaiter(void 0, void 0, void 0, function* () {
-    return yield connection_1.prisma.shifts.findMany();
+    return yield connection_1.prisma.shift.findMany();
 });
 exports.findShift = findShift;
+const createProfileAndImagesProfile = (data, images) => __awaiter(void 0, void 0, void 0, function* () {
+    const creaetEmployeeProfile = yield connection_1.prisma.employeeProfile.create({
+        data: {
+            birthDate: new Date(data.birthDate),
+            address: data.address,
+            employeeId: 'clvlxbwke0001tf9iotx5mhx9',
+        },
+    });
+    const imageToCreate = [];
+    images.forEach((item) => {
+        imageToCreate.push({
+            url: item.path,
+            employeeProfileId: creaetEmployeeProfile.id,
+        });
+    });
+    yield connection_1.prisma.employeeImagesProfile.createMany({
+        data: [...imageToCreate],
+    });
+});
+exports.createProfileAndImagesProfile = createProfileAndImagesProfile;

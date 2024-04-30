@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.findEmployeeByUid = exports.findEmployeeByEmail = void 0;
 const connection_1 = require("../../connection");
 const findEmployeeByEmail = (_a) => __awaiter(void 0, [_a], void 0, function* ({ email, }) {
-    const findEmployee = yield connection_1.prisma.employees.findFirst({
+    const findEmployee = yield connection_1.prisma.employee.findFirst({
         where: {
             email,
         },
@@ -23,7 +23,7 @@ const findEmployeeByEmail = (_a) => __awaiter(void 0, [_a], void 0, function* ({
 });
 exports.findEmployeeByEmail = findEmployeeByEmail;
 const findEmployeeByUid = (_b) => __awaiter(void 0, [_b], void 0, function* ({ uid }) {
-    return yield connection_1.prisma.employees.findUnique({
+    return yield connection_1.prisma.employee.findUnique({
         where: {
             uid,
         },

@@ -9,12 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.employeeShift = exports.employeePosition = exports.leaveRequest = exports.clockout = exports.clockin = void 0;
+exports.createProfile = exports.employeeShift = exports.employeePosition = exports.leaveRequest = exports.clockout = exports.clockin = void 0;
 const EmployeeServices_1 = require("../services/EmployeeServices");
 const clockin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { employeeid } = req.headers;
+    const reqToken = req;
+    const { uid } = reqToken.payload;
     try {
-        yield (0, EmployeeServices_1.createAttendanceClockin)({ employeeid });
+        yield (0, EmployeeServices_1.createAttendanceClockin)({ uid });
         res.status(201).send({
             error: false,
             message: 'Clockin Success',
@@ -89,3 +90,18 @@ const employeeShift = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.employeeShift = employeeShift;
+const createProfile = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const data = JSON.parse(req.body.data);
+    try {
+        yield (0, EmployeeServices_1.createProfileAndImagesProfile)(data, req.files['images']);
+        res.status(201).send({
+            error: false,
+            message: 'Create Profile Success!',
+            data: null,
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+});
+exports.createProfile = createProfile;

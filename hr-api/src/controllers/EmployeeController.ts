@@ -1,20 +1,23 @@
 import { NextFunction, Request, Response } from 'express';
 import {
+  createProfileAndImagesProfile,
   createAttendanceClockin,
   createAttendanceClockout,
   createLeaveEmployeeRequest,
   findPosition,
   findShift,
 } from '../services/EmployeeServices';
+import { IReqAccessToken } from '../helpers/Token';
 
 export const clockin = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const { employeeid } = req.headers;
+  const reqToken = req as IReqAccessToken;
+  const { uid } = reqToken.payload;
   try {
-    await createAttendanceClockin({ employeeid });
+    await createAttendanceClockin({ uid });
 
     res.status(201).send({
       error: false,
@@ -100,6 +103,26 @@ export const employeeShift = async (
       data: employeeShift,
     });
   } catch (error: any) {
+    next(error);
+  }
+};
+
+export const createProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const data = JSON.parse(req.body.data);
+
+  try {
+    await createProfileAndImagesProfile(data, req.files['images']);
+
+    res.status(201).send({
+      error: false,
+      message: 'Create Profile Success!',
+      data: null,
+    });
+  } catch (error) {
     next(error);
   }
 };

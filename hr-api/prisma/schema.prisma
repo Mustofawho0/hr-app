@@ -13,27 +13,53 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Employees {
-  uid          String    @id @default(cuid())
-  email        String
-  fullname     String
-  password     String
-  position     Positions @relation(fields: [positionId], references: [id])
-  positionId   Int
-  shift        Shifts    @relation(fields: [shiftId], references: [id])
-  shiftId      Int
-  leaveBalance Int       @default(12)
-  address      String
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  deletedAt    DateTime?
+model Employee {
+  uid             String           @id @default(cuid())
+  email           String
+  fullname        String
+  password        String
+  position        Position         @relation(fields: [positionId], references: [id])
+  positionId      Int
+  shift           Shift            @relation(fields: [shiftId], references: [id])
+  shiftId         Int
+  leaveBalance    Int              @default(12)
+  address         String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  deletedAt       DateTime?
+  employeeprofile EmployeeProfile?
 
-  attendance     Attendances[]
-  leaveRequest   LeaveRequests[]
-  monthlyPayroll MonthlyPayrolls[]
+  attendance     Attendance[]
+  leaveRequest   LeaveRequest[]
+  monthlyPayroll MonthlyPayroll[]
 }
 
-model Positions {
+model EmployeeProfile {
+  id         Int      @id @default(autoincrement())
+  birthDate  DateTime @db.Date()
+  address    String
+  employee   Employee @relation(fields: [employeeId], references: [uid])
+  employeeId String   @unique
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  employeeimagesprofile EmployeeImagesProfile[]
+}
+
+model EmployeeImagesProfile {
+  id                Int             @id @default(autoincrement())
+  url               String
+  employeeprofile   EmployeeProfile @relation(fields: [employeeProfileId], references: [id])
+  employeeProfileId Int
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model Position {
   id        Int       @id @default(autoincrement())
   name      String
   salary    Int
@@ -41,10 +67,10 @@ model Positions {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  employee Employees[]
+  employee Employee[]
 }
 
-model Shifts {
+model Shift {
   id        Int       @id @default(autoincrement())
   start     DateTime  @db.Time()
   end       DateTime  @db.Time()
@@ -52,15 +78,15 @@ model Shifts {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  employee Employees[]
+  employee Employee[]
 }
 
-model Attendances {
+model Attendance {
   id         Int       @id @default(autoincrement())
   date       DateTime  @db.Date
   clockin    DateTime  @db.Time()
   clockout   DateTime? @db.Time()
-  employee   Employees @relation(fields: [employeeId], references: [uid])
+  employee   Employee  @relation(fields: [employeeId], references: [uid])
   employeeId String
   deduction  Int
   createdAt  DateTime  @default(now())
@@ -68,12 +94,12 @@ model Attendances {
   deletedAt  DateTime?
 }
 
-model LeaveRequests {
+model LeaveRequest {
   id         Int                @id @default(autoincrement())
   stardDate  DateTime           @db.Date
   endDate    DateTime           @db.Date
   status     LeaveRequestStatus @default(PENDING)
-  employee   Employees          @relation(fields: [employeeId], references: [uid])
+  employee   Employee           @relation(fields: [employeeId], references: [uid])
   employeeId String
   createdAt  DateTime           @default(now())
   updatedAt  DateTime           @updatedAt
@@ -86,10 +112,10 @@ enum LeaveRequestStatus {
   PENDING
 }
 
-model MonthlyPayrolls {
+model MonthlyPayroll {
   id             Int       @id @default(autoincrement())
   date           DateTime  @db.Date
-  employee       Employees @relation(fields: [employeeId], references: [uid])
+  employee       Employee  @relation(fields: [employeeId], references: [uid])
   employeeId     String
   totalDeduction Int
   finalSalary    Int
