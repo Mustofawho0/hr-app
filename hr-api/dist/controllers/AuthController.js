@@ -14,6 +14,7 @@ const AuthServices_1 = require("../services/AuthServices");
 const Hashing_1 = require("../helpers/Hashing");
 const Token_1 = require("../helpers/Token");
 const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
         const { email, password } = req.body;
         const findEmployeeByEmailResult = yield (0, AuthServices_1.findEmployeeByEmail)({ email });
@@ -32,6 +33,7 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
             data: {
                 token,
                 fullname: findEmployeeByEmailResult.fullname,
+                image: (_a = findEmployeeByEmailResult.employeeprofile) === null || _a === void 0 ? void 0 : _a.employeeimagesprofile[0].url,
             },
         });
     }

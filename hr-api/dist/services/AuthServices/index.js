@@ -16,6 +16,13 @@ const findEmployeeByEmail = (_a) => __awaiter(void 0, [_a], void 0, function* ({
         where: {
             email,
         },
+        include: {
+            employeeprofile: {
+                include: {
+                    employeeimagesprofile: true,
+                },
+            },
+        },
     });
     if (!findEmployee)
         throw new Error('User Not Found!');

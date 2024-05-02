@@ -28,6 +28,9 @@ export const login = async (
       data: {
         token,
         fullname: findEmployeeByEmailResult.fullname,
+        image:
+          findEmployeeByEmailResult.employeeprofile?.employeeimagesprofile[0]
+            .url,
       },
     });
   } catch (error: any) {

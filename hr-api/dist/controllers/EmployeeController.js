@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createProfile = exports.employeeShift = exports.employeePosition = exports.leaveRequest = exports.clockout = exports.clockin = void 0;
 const EmployeeServices_1 = require("../services/EmployeeServices");
+const DeletedUploadFiile_1 = require("../helpers/DeletedUploadFiile");
 const clockin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const reqToken = req;
     const { uid } = reqToken.payload;
@@ -92,8 +93,16 @@ const employeeShift = (req, res, next) => __awaiter(void 0, void 0, void 0, func
 exports.employeeShift = employeeShift;
 const createProfile = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const data = JSON.parse(req.body.data);
+    console.log(data);
+    const reqToken = req;
+    const { uid } = reqToken.payload;
     try {
-        yield (0, EmployeeServices_1.createProfileAndImagesProfile)(data, req.files['images']);
+        if (req.files) {
+            const uploadedFiles = Array.isArray(req.files)
+                ? req.files
+                : req.files['images'];
+            yield (0, EmployeeServices_1.createProfileAndImagesProfile)(data, uploadedFiles, uid);
+        }
         res.status(201).send({
             error: false,
             message: 'Create Profile Success!',
@@ -101,6 +110,7 @@ const createProfile = (req, res, next) => __awaiter(void 0, void 0, void 0, func
         });
     }
     catch (error) {
+        (0, DeletedUploadFiile_1.deletedUploadFile)(req.files);
         next(error);
     }
 });

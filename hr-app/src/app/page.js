@@ -5,9 +5,11 @@ import { RiFileList3Fill } from 'react-icons/ri';
 import { BsCalendarWeekFill } from 'react-icons/bs';
 import { FaVirusCovid } from 'react-icons/fa6';
 import { useSelector } from 'react-redux';
+import Image from 'next/image';
 
 export default function Home() {
   const stateUser = useSelector((state) => state.user);
+  console.log(stateUser.image);
   return (
     <>
       <div className='bg-indigo-500 px-10 rounded-es-lg rounded-ee-lg'>
@@ -20,7 +22,16 @@ export default function Home() {
           </div>
           <div>
             <div className='w-[70px] h-[70px] bg-indigo-600 rounded-full text-white text-sm flex justify-center items-center'>
-              Image
+              {stateUser.image ? (
+                <Image
+                  src={`http://localhost:404/api/${stateUser.image}`}
+                  width={200}
+                  height={200}
+                  alt='Image Profile'
+                />
+              ) : (
+                'Image Error'
+              )}
             </div>
           </div>
         </div>

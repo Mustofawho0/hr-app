@@ -8,6 +8,13 @@ export const findEmployeeByEmail = async ({
     where: {
       email,
     },
+    include: {
+      employeeprofile: {
+        include: {
+          employeeimagesprofile: true,
+        },
+      },
+    },
   });
 
   if (!findEmployee) throw new Error('User Not Found!');

@@ -15,6 +15,7 @@ export const useAuthLogin = () => {
       dispatch(
         setUser({
           fullname: res.data.data.fullname,
+          image: res.data.data.image,
         })
       );
       router.push('/');

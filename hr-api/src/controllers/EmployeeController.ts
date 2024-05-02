@@ -8,6 +8,7 @@ import {
   findShift,
 } from '../services/EmployeeServices';
 import { IReqAccessToken } from '../helpers/Token';
+import { deletedUploadFile } from '../helpers/DeletedUploadFiile';
 
 export const clockin = async (
   req: Request,
@@ -113,9 +114,18 @@ export const createProfile = async (
   next: NextFunction
 ) => {
   const data = JSON.parse(req.body.data);
+  console.log(data);
+  const reqToken = req as IReqAccessToken;
+  const { uid } = reqToken.payload;
 
   try {
-    await createProfileAndImagesProfile(data, req.files['images']);
+    if (req.files) {
+      const uploadedFiles = Array.isArray(req.files)
+        ? req.files
+        : req.files['images'];
+
+      await createProfileAndImagesProfile(data, uploadedFiles, uid);
+    }
 
     res.status(201).send({
       error: false,
@@ -123,6 +133,7 @@ export const createProfile = async (
       data: null,
     });
   } catch (error) {
+    deletedUploadFile(req.files);
     next(error);
   }
 };

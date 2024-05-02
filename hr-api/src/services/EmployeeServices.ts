@@ -99,23 +99,29 @@ export const findShift = async () => {
   return await prisma.shift.findMany();
 };
 
-export const createProfileAndImagesProfile = async (data: any, images: any) => {
-  const creaetEmployeeProfile = await prisma.employeeProfile.create({
-    data: {
-      birthDate: new Date(data.birthDate),
-      address: data.address,
-      employeeId: 'clvlxbwke0001tf9iotx5mhx9',
-    },
-  });
-
-  const imageToCreate: any = [];
-  images.forEach((item: any) => {
-    imageToCreate.push({
-      url: item.path,
-      employeeProfileId: creaetEmployeeProfile.id,
+export const createProfileAndImagesProfile = async (
+  data: any,
+  images: any,
+  uid: any
+) => {
+  return await prisma.$transaction(async (tx) => {
+    const creaetEmployeeProfile = await tx.employeeProfile.create({
+      data: {
+        birthDate: new Date(data.birthDate),
+        address: data.address,
+        employeeId: uid,
+      },
     });
-  });
-  await prisma.employeeImagesProfile.createMany({
-    data: [...imageToCreate],
+
+    const imageToCreate: any = [];
+    images.forEach((item: any) => {
+      imageToCreate.push({
+        url: item.path,
+        employeeProfileId: creaetEmployeeProfile.id,
+      });
+    });
+    await tx.employeeImagesProfile.createMany({
+      data: [...imageToCreate],
+    });
   });
 };

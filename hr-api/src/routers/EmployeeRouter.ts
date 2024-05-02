@@ -17,6 +17,6 @@ router.put('/clockout/:attendanceId', tokenVerify, clockout);
 router.post('/leave', tokenVerify, leaveRequest);
 router.get('/position', employeePosition);
 router.get('/shift', employeeShift);
-router.post('/upload-image', uploader, createProfile);
+router.post('/upload-image', tokenVerify, uploader, createProfile);
 
 export default router;

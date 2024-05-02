@@ -85,23 +85,25 @@ const findShift = () => __awaiter(void 0, void 0, void 0, function* () {
     return yield connection_1.prisma.shift.findMany();
 });
 exports.findShift = findShift;
-const createProfileAndImagesProfile = (data, images) => __awaiter(void 0, void 0, void 0, function* () {
-    const creaetEmployeeProfile = yield connection_1.prisma.employeeProfile.create({
-        data: {
-            birthDate: new Date(data.birthDate),
-            address: data.address,
-            employeeId: 'clvlxbwke0001tf9iotx5mhx9',
-        },
-    });
-    const imageToCreate = [];
-    images.forEach((item) => {
-        imageToCreate.push({
-            url: item.path,
-            employeeProfileId: creaetEmployeeProfile.id,
+const createProfileAndImagesProfile = (data, images, uid) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield connection_1.prisma.$transaction((tx) => __awaiter(void 0, void 0, void 0, function* () {
+        const creaetEmployeeProfile = yield tx.employeeProfile.create({
+            data: {
+                birthDate: new Date(data.birthDate),
+                address: data.address,
+                employeeId: uid,
+            },
         });
-    });
-    yield connection_1.prisma.employeeImagesProfile.createMany({
-        data: [...imageToCreate],
-    });
+        const imageToCreate = [];
+        images.forEach((item) => {
+            imageToCreate.push({
+                url: item.path,
+                employeeProfileId: creaetEmployeeProfile.id,
+            });
+        });
+        yield tx.employeeImagesProfile.createMany({
+            data: [...imageToCreate],
+        });
+    }));
 });
 exports.createProfileAndImagesProfile = createProfileAndImagesProfile;

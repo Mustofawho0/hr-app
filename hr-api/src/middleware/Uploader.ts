@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { multerUpload } from '../helpers/Multer';
 import { rmSync } from 'fs';
+import { deletedUploadFile } from '../helpers/DeletedUploadFiile';
 
 export const uploader = (req: Request, res: Response, next: NextFunction) => {
   const upload = multerUpload.fields([{ name: 'images', maxCount: 3 }]);
@@ -24,17 +25,7 @@ export const uploader = (req: Request, res: Response, next: NextFunction) => {
       }
       next();
     } catch (error: any) {
-      if (req.files) {
-        const uploadFiles = Array.isArray(req.files)
-          ? req.files
-          : req.files['images'];
-
-        if (Array.isArray(uploadFiles)) {
-          uploadFiles?.forEach((item) => {
-            rmSync(item.path);
-          });
-        }
-      }
+      deletedUploadFile(req.files);
       next({
         status: 500,
         message: error.message,
@@ -42,37 +33,3 @@ export const uploader = (req: Request, res: Response, next: NextFunction) => {
     }
   });
 };
-
-// import { Request } from 'express';
-// import multer from 'multer';
-// import { join } from 'path';
-
-// type DestinationCallback = (error: Error | null, destination: string) => void;
-// type FileNameCallback = (error: Error | null, filename: string) => void;
-
-// export const uploader = (filePrefix: string, folderName?: string) => {
-//   const defaultDir = join(__dirname, '../../public');
-
-//   const storage = multer.diskStorage({
-//     destination: (
-//       req: Request,
-//       file: Express.Multer.File,
-//       cb: DestinationCallback
-//     ) => {
-//       const destination = folderName ? defaultDir + folderName : defaultDir;
-//       cb(null, destination);
-//     },
-//     filename: (
-//       req: Request,
-//       file: Express.Multer.File,
-//       cb: FileNameCallback
-//     ) => {
-//       const originalNameParts = file.originalname.split('.');
-//       const fileExtension = originalNameParts[originalNameParts.length - 1];
-//       const newFileName = filePrefix + Date.now() + '.' + fileExtension;
-
-//       cb(null, newFileName);
-//     },
-//   });
-//   return multer({ storage: storage });
-// };
