@@ -6,6 +6,7 @@ import {
   createLeaveEmployeeRequest,
   findPosition,
   findShift,
+  updateProfileAndImagesProfile,
 } from '../services/EmployeeServices';
 import { IReqAccessToken } from '../helpers/Token';
 import { deletedUploadFile } from '../helpers/DeletedUploadFiile';
@@ -114,7 +115,6 @@ export const createProfile = async (
   next: NextFunction
 ) => {
   const data = JSON.parse(req.body.data);
-  console.log(data);
   const reqToken = req as IReqAccessToken;
   const { uid } = reqToken.payload;
 
@@ -137,3 +137,47 @@ export const createProfile = async (
     next(error);
   }
 };
+
+export const updateProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { payload } = req as IReqAccessToken;
+    const data = JSON.parse(req.body.data);
+
+    if (req.files) {
+      const uploadedFiles = Array.isArray(req.files)
+        ? req.files
+        : req.files['images'];
+      const employeeImagesProfileToDelete = await updateProfileAndImagesProfile(
+        data,
+        uploadedFiles,
+        payload.uid
+      );
+    }
+    res.status(201).send({
+      error: false,
+      message: 'Update Profile Success!',
+      data: null,
+    });
+  } catch (error) {
+    deletedUploadFile(req.files);
+    next(error);
+  }
+};
+
+// export const employeeVerify = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// )=>{
+//   try {
+//     const { payload } = req as IReqAccessToken;
+//     const data = JSON.parse(req.body.data);
+
+//   } catch (error) {
+//     next(error)
+//   }
+// }

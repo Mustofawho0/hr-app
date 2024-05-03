@@ -11,4 +11,5 @@ router.post('/leave', Token_1.tokenVerify, EmployeeController_1.leaveRequest);
 router.get('/position', EmployeeController_1.employeePosition);
 router.get('/shift', EmployeeController_1.employeeShift);
 router.post('/upload-image', Token_1.tokenVerify, Uploader_1.uploader, EmployeeController_1.createProfile);
+router.put('/update-image', Token_1.tokenVerify, Uploader_1.uploader, EmployeeController_1.updateProfile);
 exports.default = router;

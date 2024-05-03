@@ -74,7 +74,7 @@ export const createEmployee = async ({
   shiftId,
   address,
 }: ICreateEmployeeServices) => {
-  await prisma.employee.create({
+  return await prisma.employee.create({
     data: {
       email,
       fullname,
@@ -82,6 +82,17 @@ export const createEmployee = async ({
       positionId,
       shiftId,
       address,
+    },
+  });
+};
+
+export const updateEmployeVerifyToken = async ({ uid }: any) => {
+  await prisma.employee.update({
+    where: {
+      uid: uid,
+    },
+    data: {
+      status: 'VERIFY',
     },
   });
 };

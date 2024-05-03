@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createProfile = exports.employeeShift = exports.employeePosition = exports.leaveRequest = exports.clockout = exports.clockin = void 0;
+exports.updateProfile = exports.createProfile = exports.employeeShift = exports.employeePosition = exports.leaveRequest = exports.clockout = exports.clockin = void 0;
 const EmployeeServices_1 = require("../services/EmployeeServices");
 const DeletedUploadFiile_1 = require("../helpers/DeletedUploadFiile");
 const clockin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -93,7 +93,6 @@ const employeeShift = (req, res, next) => __awaiter(void 0, void 0, void 0, func
 exports.employeeShift = employeeShift;
 const createProfile = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const data = JSON.parse(req.body.data);
-    console.log(data);
     const reqToken = req;
     const { uid } = reqToken.payload;
     try {
@@ -115,3 +114,37 @@ const createProfile = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.createProfile = createProfile;
+const updateProfile = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { payload } = req;
+        const data = JSON.parse(req.body.data);
+        if (req.files) {
+            const uploadedFiles = Array.isArray(req.files)
+                ? req.files
+                : req.files['images'];
+            const employeeImagesProfileToDelete = yield (0, EmployeeServices_1.updateProfileAndImagesProfile)(data, uploadedFiles, payload.uid);
+        }
+        res.status(201).send({
+            error: false,
+            message: 'Update Profile Success!',
+            data: null,
+        });
+    }
+    catch (error) {
+        (0, DeletedUploadFiile_1.deletedUploadFile)(req.files);
+        next(error);
+    }
+});
+exports.updateProfile = updateProfile;
+// export const employeeVerify = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// )=>{
+//   try {
+//     const { payload } = req as IReqAccessToken;
+//     const data = JSON.parse(req.body.data);
+//   } catch (error) {
+//     next(error)
+//   }
+// }

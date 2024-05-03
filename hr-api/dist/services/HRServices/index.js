@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createEmployee = exports.updateLeaveRequest = void 0;
+exports.updateEmployeVerifyToken = exports.createEmployee = exports.updateLeaveRequest = void 0;
 const connection_1 = require("../../connection");
 const date_fns_1 = require("date-fns");
 const updateLeaveRequest = (_a) => __awaiter(void 0, [_a], void 0, function* ({ id }) {
@@ -70,7 +70,7 @@ const updateLeaveRequest = (_a) => __awaiter(void 0, [_a], void 0, function* ({ 
 });
 exports.updateLeaveRequest = updateLeaveRequest;
 const createEmployee = (_b) => __awaiter(void 0, [_b], void 0, function* ({ email, fullname, password, positionId, shiftId, address, }) {
-    yield connection_1.prisma.employee.create({
+    return yield connection_1.prisma.employee.create({
         data: {
             email,
             fullname,
@@ -82,3 +82,14 @@ const createEmployee = (_b) => __awaiter(void 0, [_b], void 0, function* ({ emai
     });
 });
 exports.createEmployee = createEmployee;
+const updateEmployeVerifyToken = (_c) => __awaiter(void 0, [_c], void 0, function* ({ uid }) {
+    yield connection_1.prisma.employee.update({
+        where: {
+            uid: uid,
+        },
+        data: {
+            status: 'VERIFY',
+        },
+    });
+});
+exports.updateEmployeVerifyToken = updateEmployeVerifyToken;

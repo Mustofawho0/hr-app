@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createProfileAndImagesProfile = exports.findShift = exports.findPosition = exports.createLeaveEmployeeRequest = exports.createAttendanceClockout = exports.createAttendanceClockin = void 0;
+exports.updateProfileAndImagesProfile = exports.createProfileAndImagesProfile = exports.findShift = exports.findPosition = exports.createLeaveEmployeeRequest = exports.createAttendanceClockout = exports.createAttendanceClockin = void 0;
 const date_fns_1 = require("date-fns");
 const connection_1 = require("../connection");
 const createAttendanceClockin = (_a) => __awaiter(void 0, [_a], void 0, function* ({ uid }) {
@@ -87,7 +87,7 @@ const findShift = () => __awaiter(void 0, void 0, void 0, function* () {
 exports.findShift = findShift;
 const createProfileAndImagesProfile = (data, images, uid) => __awaiter(void 0, void 0, void 0, function* () {
     return yield connection_1.prisma.$transaction((tx) => __awaiter(void 0, void 0, void 0, function* () {
-        const creaetEmployeeProfile = yield tx.employeeProfile.create({
+        const createEmployeeProfile = yield tx.employeeProfile.create({
             data: {
                 birthDate: new Date(data.birthDate),
                 address: data.address,
@@ -98,7 +98,7 @@ const createProfileAndImagesProfile = (data, images, uid) => __awaiter(void 0, v
         images.forEach((item) => {
             imageToCreate.push({
                 url: item.path,
-                employeeProfileId: creaetEmployeeProfile.id,
+                employeeProfileId: createEmployeeProfile.id,
             });
         });
         yield tx.employeeImagesProfile.createMany({
@@ -107,3 +107,51 @@ const createProfileAndImagesProfile = (data, images, uid) => __awaiter(void 0, v
     }));
 });
 exports.createProfileAndImagesProfile = createProfileAndImagesProfile;
+const updateProfileAndImagesProfile = (data, images, uid) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield connection_1.prisma.$transaction((tx) => __awaiter(void 0, void 0, void 0, function* () {
+        const findEmployeeProfile = yield tx.employeeProfile.findUnique({
+            where: {
+                employeeId: uid,
+            },
+        });
+        if (!findEmployeeProfile)
+            throw new Error('Employee Profile Not Found');
+        yield tx.employeeProfile.update({
+            where: {
+                employeeId: uid,
+            },
+            data: {
+                birthDate: new Date(data.birthDate),
+                address: data.address,
+            },
+        });
+        const findEmployeeImagesProfile = yield tx.employeeImagesProfile.findMany({
+            where: {
+                employeeProfileId: findEmployeeProfile.id,
+            },
+        });
+        yield tx.employeeImagesProfile.deleteMany({
+            where: {
+                employeeProfileId: findEmployeeProfile.id,
+            },
+        });
+        const imageToUpdate = [];
+        images.forEach((item) => {
+            imageToUpdate.push({
+                url: item.path,
+                employeeProfileId: findEmployeeProfile.id,
+            });
+        });
+        yield tx.employeeImagesProfile.createMany({
+            data: [...imageToUpdate],
+        });
+    }));
+    // if (findEmployeeProfileImage) {
+    //   images.forEach((item: any) => {
+    //     updateToImage.push({
+    //       url: item.path
+    //     })
+    //     rmSync(item.path)
+    //   });
+});
+exports.updateProfileAndImagesProfile = updateProfileAndImagesProfile;

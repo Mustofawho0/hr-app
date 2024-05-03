@@ -1,5 +1,6 @@
 import { differenceInMinutes } from 'date-fns';
 import { prisma } from '../connection';
+import { rmSync } from 'fs';
 
 export const createAttendanceClockin = async ({ uid }: { uid: any }) => {
   await prisma.attendance.create({
@@ -105,7 +106,7 @@ export const createProfileAndImagesProfile = async (
   uid: any
 ) => {
   return await prisma.$transaction(async (tx) => {
-    const creaetEmployeeProfile = await tx.employeeProfile.create({
+    const createEmployeeProfile = await tx.employeeProfile.create({
       data: {
         birthDate: new Date(data.birthDate),
         address: data.address,
@@ -117,11 +118,65 @@ export const createProfileAndImagesProfile = async (
     images.forEach((item: any) => {
       imageToCreate.push({
         url: item.path,
-        employeeProfileId: creaetEmployeeProfile.id,
+        employeeProfileId: createEmployeeProfile.id,
       });
     });
     await tx.employeeImagesProfile.createMany({
       data: [...imageToCreate],
     });
   });
+};
+
+export const updateProfileAndImagesProfile = async (
+  data: any,
+  images: any,
+  uid: any
+) => {
+  return await prisma.$transaction(async (tx) => {
+    const findEmployeeProfile = await tx.employeeProfile.findUnique({
+      where: {
+        employeeId: uid,
+      },
+    });
+    if (!findEmployeeProfile) throw new Error('Employee Profile Not Found');
+
+    await tx.employeeProfile.update({
+      where: {
+        employeeId: uid,
+      },
+      data: {
+        birthDate: new Date(data.birthDate),
+        address: data.address,
+      },
+    });
+    const findEmployeeImagesProfile = await tx.employeeImagesProfile.findMany({
+      where: {
+        employeeProfileId: findEmployeeProfile.id,
+      },
+    });
+
+    await tx.employeeImagesProfile.deleteMany({
+      where: {
+        employeeProfileId: findEmployeeProfile.id,
+      },
+    });
+    const imageToUpdate: any = [];
+    images.forEach((item: any) => {
+      imageToUpdate.push({
+        url: item.path,
+        employeeProfileId: findEmployeeProfile.id,
+      });
+    });
+    await tx.employeeImagesProfile.createMany({
+      data: [...imageToUpdate],
+    });
+  });
+
+  // if (findEmployeeProfileImage) {
+  //   images.forEach((item: any) => {
+  //     updateToImage.push({
+  //       url: item.path
+  //     })
+  //     rmSync(item.path)
+  //   });
 };

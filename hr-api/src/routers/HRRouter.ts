@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   approvalLeaveRequest,
   createEmployeeAccount,
+  updateEmployeeStatus,
 } from '../controllers/HRController';
 import { validatorCreateEmployee } from '../middleware/HRValidator';
 import { exampleMiddleware } from '../middleware/example';
@@ -18,12 +19,12 @@ router.put(
 );
 router.post(
   '/employee',
-  exampleMiddleware,
-  tokenVerify,
-  roleVerifyHRAndManager,
-  validatorCreateEmployee,
-  handleErrorValidator,
+  // exampleMiddleware,
+  // tokenVerify,
+  // roleVerifyHRAndManager,
+  // validatorCreateEmployee,
+  // handleErrorValidator,
   createEmployeeAccount
 );
-
+router.post('/verify-account', tokenVerify, updateEmployeeStatus);
 export default router;

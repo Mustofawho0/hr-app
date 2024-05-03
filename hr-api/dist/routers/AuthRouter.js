@@ -4,4 +4,5 @@ const express_1 = require("express");
 const AuthController_1 = require("../controllers/AuthController");
 const router = (0, express_1.Router)();
 router.post('/login', AuthController_1.login);
+router.post('/send-mail', AuthController_1.sendMail);
 exports.default = router;

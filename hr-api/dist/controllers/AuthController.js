@@ -9,10 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = void 0;
+exports.sendMail = exports.login = void 0;
 const AuthServices_1 = require("../services/AuthServices");
 const Hashing_1 = require("../helpers/Hashing");
 const Token_1 = require("../helpers/Token");
+const TransporterMailer_1 = require("../helpers/TransporterMailer");
 const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
@@ -42,3 +43,17 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.login = login;
+const sendMail = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield TransporterMailer_1.TransporterNodemailer.sendMail({
+            from: 'HR-APP',
+            to: 'bal.iqbal.mi@gmail.com',
+            subject: 'Test Email',
+            html: '<h1>Hello World</h1>',
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+});
+exports.sendMail = sendMail;

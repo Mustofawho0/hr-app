@@ -28,10 +28,16 @@ model Employee {
   updatedAt       DateTime         @updatedAt
   deletedAt       DateTime?
   employeeprofile EmployeeProfile?
+  status          EmployeeVerify   @default(UNVERIFY)
 
   attendance     Attendance[]
   leaveRequest   LeaveRequest[]
   monthlyPayroll MonthlyPayroll[]
+}
+
+enum EmployeeVerify {
+  UNVERIFY
+  VERIFY
 }
 
 model EmployeeProfile {
